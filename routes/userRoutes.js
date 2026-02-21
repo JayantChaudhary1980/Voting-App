@@ -7,13 +7,26 @@ const {jwtAuthMiddleware, generateToken} = require('./../jwt'); // Importing fro
 router.post('/signup', async (req, res) => { // signup for the first time
     try{
         const data = req.body;
+
+        // If trying to create admin (Only 1 admin should exist)
+        if (data.role === 'admin') {
+
+         const existingAdmin = await User.findOne({ role:  'admin' });
+
+         if (existingAdmin) {
+            return res.status(400).json({
+            error: 'Admin already exists'
+            });
+          }
+        }
+
         const newUser = new User(data);
 
         const response = await newUser.save();
         console.log('data saved');
 
         const payload = {
-            id: response.id,
+            id: response.id
         }
         console.log(JSON.stringify(payload));
         const token = generateToken(payload);
@@ -57,7 +70,7 @@ router.post('/login', async (req, res) => {
 // User want to see their profile so that he can change his password
 router.get('/profile', jwtAuthMiddleware, async (req,res) => {
   try{
-    const userData = req.user; // user naam ki key k andar hamari decoded value jwt middleware ne store ki thi.
+    const userData = req.user; // user naam ki key k andar hamari decoded value (i.e. payload) jwt middleware ne store ki thi.
     console.log('User Data: ', userData)
     // iss userData me uski id bhi present hai to.. is id k through hum person ka data find karenge
     const userId = userData.id;

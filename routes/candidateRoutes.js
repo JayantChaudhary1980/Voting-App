@@ -42,7 +42,7 @@ router.put('/:candidateID', jwtAuthMiddleware, async (req, res) => { // Iss rout
     const candidateID = req.params.candidateID; // Extract the id from the URL parameter
     const updatedCandidateData = req.body;
     
-    const response = await Person.findByIdAndUpdate(
+    const response = await Candidate.findByIdAndUpdate(
       candidateID,
       updatedCandidateData,
       { new: true, runValidators: true }
@@ -69,7 +69,7 @@ router.delete('/:candidateID', jwtAuthMiddleware, async (req, res) => { // Iss r
     
     const candidateID = req.params.candidateID; // Extract the id from the URL parameter
 
-    const response = await Person.findByIdAndDelete(
+    const response = await Candidate.findByIdAndDelete(
       candidateID);
       
       if (!response) {
